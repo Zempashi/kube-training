@@ -1,0 +1,11 @@
+*.aux
+*.log
+*.nav
+*.out
+*.pygtex
+*.pygstyle
+*.snm
+*.toc
+*.vrb
+
+introduction.pdf
