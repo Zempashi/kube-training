@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "minetest.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "minetest.name" . }}
+    helm.sh/chart: {{ include "minetest.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: minetest
+      protocol: UDP
+      name: minetest
+{{- if eq .Values.service.type "NodePort" }}
+{{- with .Values.service.nodePort }}
+      nodePort: {{ . }}
+{{- end }}
+{{- end }}
+  selector:
+    app.kubernetes.io/name: {{ include "minetest.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
