@@ -573,10 +573,15 @@ Cilium      & BPF/L2/L3 & No/Yes(extern)   & Vxlan         & Yes              & 
 \end{frame}
 
 \begin{frame}
-  \frametitle{Custom Ressource Definition}
+  \frametitle{Custom Ressource Definition - Operators}
   \begin{columns}
-  \begin{column}{0.6\textwidth}
+  \begin{column}{0.55\textwidth}
+    (\textit{prometheus-operator})
     \inputminted[fontsize=\tiny,frame=single]{yaml}{resources/service-monitor.yaml}
+  \end{column}
+  \begin{column}{0.4\textwidth}
+    (\textit{kubedb})
+    \inputminted[fontsize=\tiny,frame=single]{yaml}{resources/kubedb.yaml}
   \end{column}
   \end{columns}
 \end{frame}
