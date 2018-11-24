@@ -36,7 +36,7 @@ jobs:
     - run:
         name: 'install tools for release'
         command: |
-          pacman -Sy --noconfirm git hub tar
+          pacman -Sy --noconfirm --noprogressbar git hub openssh tar
 
     - checkout
     - attach_workspace:
@@ -44,19 +44,18 @@ jobs:
     - run:
         name: 'release'
         command: |
-          if [ "${CIRCLE_BRANCH}" == "master" ] && [ ! -z "${CIRCLE_TAG}" ]; then
-              hub release create -a build/introduction.pdf \
-              -m "v${CIRCLE_TAG}" "v${CIRCLE_TAG}"
-          else
-              echo "skip release on branch '${CIRCLE_BRANCH}'"
-          fi;
+          hub release create -a build/introduction.pdf \
+          -m "${CIRCLE_TAG}" "${CIRCLE_TAG}"
 
 
 workflows:
   version: 2
   build_and_release:
     jobs:
-    - build
+    - build:
+        filters:
+          tags:
+            only: /^v.*/
     - release:
         context: kube-training-release
         requires:
@@ -64,3 +63,5 @@ workflows:
         filters:
           tags:
             only: /^v.*/
+          branches:
+            ignore: /.*/

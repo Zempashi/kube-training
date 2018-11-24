@@ -9,6 +9,8 @@ define run_docker
         $(1)
 endef
 
+all: slides
+
 .PHONY:
 $(BUILDER_IMAGE):
 	docker build . -t $@ --build-arg USER_ID=$(shell id -u)
