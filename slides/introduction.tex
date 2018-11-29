@@ -359,6 +359,27 @@ around 10 Billions dollars
 
 \end{frame}
 
+\begin{frame}
+  \frametitle{Controller-manager (next)}
+  \begin{columns}
+  \begin{column}{0.5\textwidth}
+    \textit{deployment-with-resources.yaml}
+    \inputminted[fontsize=\tiny,frame=single]{yaml}
+        {resources/deployment-with-resources.yaml}
+  \end{column}
+  \begin{column}{0.5\textwidth}
+    \textit{horizontal-pod-autoscaler.yaml}
+    \inputminted[fontsize=\tiny,frame=single]{yaml}
+        {resources/horizontal-pod-autoscaler.yaml}
+  \end{column}
+  \end{columns}
+  \visible<2->{
+    \centering
+    ~~\newline
+    On cloud: Perfect fit with "cluster-autoscaler"
+  }
+\end{frame}
+
 \begin{frame}[fragile]
   \frametitle{Services}
   \begin{columns}

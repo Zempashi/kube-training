@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-apache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: MyApp
+  template:
+    metadata:
+      labels:
+        app: MyApp
+    spec:
+      containers:
+      - name: web-worker
+        image: k8s.gcr.io/hpa-example
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "200m"
