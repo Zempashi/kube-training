@@ -373,11 +373,20 @@ around 10 Billions dollars
         {resources/horizontal-pod-autoscaler.yaml}
   \end{column}
   \end{columns}
-  \visible<2->{
-    \centering
-    ~~\newline
-    On cloud: Perfect fit with "cluster-autoscaler"
-  }
+  \begin{center}
+    \visible<2->{
+      \vfill
+      \footnotesize{
+        $desiredReplicas = ceil[currentReplicas * ( currentMetricValue / desiredMetricValue )]$
+      }
+      \vfill
+    }
+    \visible<3->{
+      \tiny{
+        (On cloud: Perfect fit with "cluster-autoscaler")
+      }
+    }
+    \end{center}
 \end{frame}
 
 \begin{frame}[fragile]
