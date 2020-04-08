@@ -1,10 +1,10 @@
-from ubuntu:18.10
+from ubuntu:19.10
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     make \
     git \
     git-lfs \
-    python-pygments \
+    python3-pygments \
     texlive-latex-base \
     texlive-latex-extra \
     texlive-pictures \

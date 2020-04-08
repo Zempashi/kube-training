@@ -39,7 +39,7 @@
 \definecolor{RawSienna}{cmyk}{0,0.72,1,0.45}
 
 \title{kubernetes \\
-       mano-mano}
+       net7}
 \author{Julien Girardin}
 \date{\today}
 
@@ -99,8 +99,8 @@ around 10 Billions dollars
           \inputminted[fontsize=\scriptsize]{yaml}{resources/simple-pod.yaml}
         \end{minipage}
       };
-      \node[draw,below=0.8cm of pod] (kubectl) {kubectl};
-      \node[below=1.4cm of kubectl]  (kubernetes) {
+      \node[draw,below=0.4cm of pod] (kubectl) {kubectl};
+      \node[below=1.0cm of kubectl]  (kubernetes) {
         \pgftext{\includegraphics[height=2cm]{img/kubernetes}}
       };
       \draw[->] (pod) -- (kubectl);
@@ -115,6 +115,11 @@ around 10 Billions dollars
         like watchdogs, conf-managers, monitoring adapters
       \item<3-> With common network (distinct or shared with the host)
     \end{itemize}
+    \begin{block}{containers ?}
+        More precisely an {\bf OCI {\it (Open~Container~Initiative)}~Image} from an {\bf OCI~Registry}
+        on a {\bf CRI {\it (Container~Runtime~Interface)}}
+
+    \end{block}
   \end{column}
   \end{columns}
 \end{frame}
@@ -318,7 +323,7 @@ around 10 Billions dollars
     \inputminted[fontsize=\tiny,frame=single]{yaml}{resources/statefulset.yaml}
   \end{column}
   \begin{column}{0.3\textwidth}
-    \textit{Daemonset (<1.12)}
+    \textit{Daemonset}
     \inputminted[fontsize=\tiny,frame=single]{yaml}{resources/daemonset.yaml}
     \scriptsize{
       Spawn on each node but still honoring \textit{nodeAffinity} (like the two other kind)
@@ -348,9 +353,9 @@ around 10 Billions dollars
   \begin{column}{0.3\textwidth}
     \scriptsize{
       \begin{itemize}
-        \item nginx-node-a
-        \item nginx-node-b
-        \item nginx-node-d
+        \item nginx-czbk2
+        \item nginx-lc8pf
+        \item nginx-m9hps
         \item ...
       \end{itemize}
     }
@@ -359,35 +364,35 @@ around 10 Billions dollars
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Controller-manager (next)}
-  \begin{columns}
-  \begin{column}{0.5\textwidth}
-    \textit{deployment-with-resources.yaml}
-    \inputminted[fontsize=\tiny,frame=single]{yaml}
-        {resources/deployment-with-resources.yaml}
-  \end{column}
-  \begin{column}{0.5\textwidth}
-    \textit{horizontal-pod-autoscaler.yaml}
-    \inputminted[fontsize=\tiny,frame=single]{yaml}
-        {resources/horizontal-pod-autoscaler.yaml}
-  \end{column}
-  \end{columns}
-  \begin{center}
-    \visible<2->{
-      \vfill
-      \footnotesize{
-        $desiredReplicas = ceil[currentReplicas * ( currentMetricValue / desiredMetricValue )]$
-      }
-      \vfill
-    }
-    \visible<3->{
-      \tiny{
-        (On cloud: Perfect fit with "cluster-autoscaler")
-      }
-    }
-    \end{center}
-\end{frame}
+%\begin{frame}
+%  \frametitle{Controller-manager (next)}
+%  \begin{columns}
+%  \begin{column}{0.5\textwidth}
+%    \textit{deployment-with-resources.yaml}
+%    \inputminted[fontsize=\tiny,frame=single]{yaml}
+%        {resources/deployment-with-resources.yaml}
+%  \end{column}
+%  \begin{column}{0.5\textwidth}
+%    \textit{horizontal-pod-autoscaler.yaml}
+%    \inputminted[fontsize=\tiny,frame=single]{yaml}
+%        {resources/horizontal-pod-autoscaler.yaml}
+%  \end{column}
+%  \end{columns}
+%  \begin{center}
+%    \visible<2->{
+%      \vfill
+%      \footnotesize{
+%        $desiredReplicas = ceil[currentReplicas * ( currentMetricValue / desiredMetricValue )]$
+%      }
+%      \vfill
+%    }
+%    \visible<3->{
+%      \tiny{
+%        (On cloud: Perfect fit with "cluster-autoscaler")
+%      }
+%    }
+%    \end{center}
+%\end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Services}
@@ -401,7 +406,7 @@ around 10 Billions dollars
         \node (kubelet-box\i) at (kubelet\i) {kubelet};
         \node[below=0.4cm of kubelet\i] (docker\i) {docker};
         \node[right=0.5cm of docker\i] (kube-proxy\i) {kube-proxy};
-        \node[below=0.9cm of docker\i,
+        \node[below=0.6cm of docker\i,
               fit=(docker\i) (kube-proxy\i),
               inner sep=0mm] (kernel\i) {};
         \node[draw=none, align=center] at (kernel\i) {kernel};
@@ -410,7 +415,7 @@ around 10 Billions dollars
         \draw[->] (kube-proxy\i) -- (kube-proxy\i |- kernel\i);
 
         \pgfmathtruncatemacro\nextnode{\i+1}
-        \node[draw=none, below=3.3cm of kubelet\i] (kubelet\nextnode) {};
+        \node[draw=none, below=3.4cm of kubelet\i] (kubelet\nextnode) {};
       }
 
       \node[dotted,
@@ -427,8 +432,8 @@ around 10 Billions dollars
             (container3) {client};
       \foreach \i in {1,...,\nbnode}{
         \node[dashed,
-              fit=(kubelet\i) (docker\i) (kube-proxy\i) (kernel\i) (container\i),
-              inner sep=7mm,
+              fit=(kubelet\i.north) (docker\i) (kube-proxy\i) (kernel\i) (container\i.south),
+              inner sep=2mm,
               label={[anchor=north]\scriptsize{node\i}}]  (node\i) {};
       }
       \visible<2->{
@@ -537,71 +542,135 @@ Cilium      & BPF/L2/L3 & No/Yes(extern)   & Vxlan         & Yes              & 
 
     \scriptsize{
       \begin{block}{}
-          Available controllers: \textbf{GKE}, \textbf{nginx},
+          Available controllers: GKE, nginx-ingress,
             haproxy, voyager, Traefik, Kong, F5, Nginx Inc., Istio, ALB(AWS), ...
-
-          \tiny{\textbf{(bold: officially supported by kubernetes developper)}}
       \end{block}
     }
   \end{column}
   \end{columns}
 \end{frame}
 
+\newcommand\myfile{%
+\begin{tikzpicture}[overlay]
+ \draw (0,0) -- (0,1.2) -- (0.7,1.2) -- (0.7,0.8) -- (1,0.8) -- (1,0) -- cycle;
+  \draw (0.7,1.2) -- (1,0.8);
+  \foreach \y in {0.2,0.4,0.6}{
+     \draw (0.2,\y) -- (0.8,\y);
+     \draw (0.2,0.8) -- (0.6,0.8);
+     \draw (0.2,1) -- (0.6,1);
+  }
+\end{tikzpicture}%
+}
+
 \begin{frame}
-  \frametitle{Helm}
+  \frametitle{Helm3}
+  \centering
   \begin{tikzpicture}
     \def\nbnode{3}
     \node[draw] (helm) {Helm};
-    \node[draw,right=3cm of helm, rotate=90,anchor=north] (apiserver) {Kube-apiserver};
-    \node[right=3cm of apiserver, xshift=0.5cm] (node1) {};
-    \foreach \i in {1,...,\nbnode}{
-      \node[draw,minimum height=0.9cm, minimum width=3.5cm] (node\i-box) at (node\i) {node\i};
-      \pgfmathtruncatemacro\nextnode{\i+1}
-      \node[below=1cm of node\i] (node\nextnode) {};
+    \visible<2,3,5,6,7,8>{
+      \node[right=of helm, yshift=-5mm] (chart) {\myfile{}};
+      \draw[->] ([yshift=0.5cm]chart.west) -- (helm);
     }
-    \node[draw,dotted,anchor=south west, xshift=1mm, yshift=1mm] (tiller) at (node1-box.south west) {Tiller};
-    \visible<2-3>{
-      \draw[->,rounded corners=8pt] (helm) -- (apiserver) -- (tiller);
+    \visible<2>{
+      \node[above=0cm of helm.north, anchor=south] {\scriptsize{template}};
+    }
+    \visible<7>{
+      \node[above=0cm of helm.north, anchor=south] {\scriptsize{template + diff + merge}};
+    }
+    \visible<2,3>{
+      \node[below=of chart,yshift=1.2cm,xshift=0.7cm] {\tiny{chart.tgz + values.yaml (v1)}};
+    }
+    \visible<5,6,7,8>{
+      \node[below=of chart,yshift=1.2cm,xshift=0.7cm] {\tiny{chart.tgz + values.yaml (v2)}};
+    }
+    \visible<3->{
+      \node[below=0.7cm of helm] (api) {};
+      \node[below left=of api, xshift=-2.5cm] (secretsplacement) {};
+      \node[draw,dashed,below=0.5cm of secretsplacement] (releasev1) {\scriptsize{release v1}};
+    }
+    \visible<8->{
+      \node[draw,dashed,below=1mm of releasev1] (releasev2) {\scriptsize{release v2}};
+    }
+    \visible<3-9>{
+      \node[draw,fit=(releasev1) (releasev2) (secretsplacement.center),
+          label={[anchor=north]above:secrets}] (secrets) {};
+
+      \node[draw,below left=of api, xshift=-1cm, rotate=90, anchor=east] (configmaps) {configMaps};
+      \node[draw,below left=of api, rotate=90, anchor=east,
+          minimum size=6mm] (hpa) {\scriptsize{horizontalPodAutoscalers}};
+      \node[draw,below=of api, rotate=90, anchor=east] (deployments) {deployments};
+      \node[draw,below right=of api, rotate=90, anchor=east] (statefulsets) {statefulSets};
+      \node[draw,below right=of api, xshift=1cm, rotate=90, anchor=east] (services) {services};
+      \node[draw,below right=of api, xshift=2cm, rotate=90, anchor=east] (ingresses) {ingresses};
+      \node[draw,below right=of api, xshift=3cm, rotate=90, anchor=east] (netpol) {networkPolicies};
+      \node[draw, dotted, below right=of api, xshift=4cm, rotate=90, anchor=east] (others) {others};
     }
     \visible<3>{
-      \draw[->,rounded corners=8pt,bend right=15] (tiller) to
-        [edge node={node [sloped,above] {\footnotesize{confimap}}}]
-        (apiserver);
+      \draw[->] (helm) -| ($ (helm -| releasev1.west) + (-0.5cm,0) $) |- (releasev1.west);
     }
-    \visible<4->{
-      \draw[->,rounded corners=8pt,bend left=15] (tiller) to
-        node[near start, anchor=east] {\footnotesize{*.yaml}}
-        (apiserver);
+    \visible<8>{
+      \draw[->] (helm) -| ($ (helm -| releasev2.west) + (-0.5cm,0) $) |- (releasev2.west);
+    }
+    \visible<3,8>{
+
+      \draw[-] (helm) -- (api.center);
+      \draw[->] (api.center) -| (secrets);
+      \draw[->] (api.center) -| (hpa);
+      \draw[->] (api.center) -| (configmaps);
+      \draw[->] (api.center) -| (deployments);
+      \draw[->] (api.center) -| (statefulsets);
+      \draw[->] (api.center) -| (services);
+      \draw[->] (api.center) -| (ingresses);
+      \draw[->] (api.center) -| (netpol);
+      \draw[->] (api.center) -| (others);
+    }
+    \visible<6>{
+      \draw[<-] (helm) -- (api.center);
+      \draw[-] (api.center) -| (secrets);
+      \draw[-] (api.center) -| (hpa);
+      \draw[-] (api.center) -| (configmaps);
+      \draw[-] (api.center) -| (deployments);
+      \draw[-] (api.center) -| (statefulsets);
+      \draw[-] (api.center) -| (services);
+      \draw[-] (api.center) -| (ingresses);
+      \draw[-] (api.center) -| (netpol);
+      \draw[-] (api.center) -| (others);
+
+      \draw[<-] (helm) -| ($ (helm -| releasev1.west) + (-0.5cm,0) $) |- (releasev1.west);
     }
   \end{tikzpicture}
+\end{frame}
 
-  \visible<5->{
-    \begin{tabular}{ll}
-      ~~\llap{\textbullet}~~dev:    & helm install foo -f no-autoscaling.yaml \\
-      ~~\llap{\textbullet}~~staging:& helm install foo -f no-s3-mock.yaml -f staging-env.yaml \\
-      ~~\llap{\textbullet}~~prod:   & helm install foo -f no-s3-mock.yaml -f production-env.yaml \\
-    \end{tabular}
+\begin{frame}
+  \frametitle{Helm features}
+
+  \visible<1->{
+    \begin{block}{adaptative and DRY}
+      \begin{tabular}{ll}
+        ~~\llap{\textbullet}~~dev:    & helm install foo ./chart -f no-autoscaling.yaml \\
+        ~~\llap{\textbullet}~~staging:& helm install foo repo/chart -f real-s3.yaml -f staging.yaml \\
+        ~~\llap{\textbullet}~~prod:   & helm install foo repo/chart -f real-s3.yaml -f production.yaml \\
+      \end{tabular}
+    \end{block}
+  }
+
+  \visible<2->{
+    \begin{block}{Multi resources rollback}
+        helm rollback foo
+    \end{block}
   }
 \end{frame}
 
-\begin{frame}
-  \frametitle{prometheus}
 
-  \begin{figure}
-    \begin{center}
-      \includegraphics[width=\textwidth]{img/prometheus_architecture.png}
-    \end{center}
-  \end{figure}
-\end{frame}
-
-\begin{frame}
-  \frametitle{istio}
-  \begin{figure}
-    \begin{center}
-      \includegraphics[width=\textwidth]{img/istio_arch.png}
-    \end{center}
-  \end{figure}
-\end{frame}
+%\begin{frame}
+%  \frametitle{istio}
+%  \begin{figure}
+%    \begin{center}
+%      \includegraphics[width=\textwidth]{img/istio_arch.png}
+%    \end{center}
+%  \end{figure}
+%\end{frame}
 
 \begin{frame}
   \frametitle{Custom Ressource Definition - Operators}
@@ -618,10 +687,39 @@ Cilium      & BPF/L2/L3 & No/Yes(extern)   & Vxlan         & Yes              & 
 \end{frame}
 
 \begin{frame}
+  \frametitle{Usefull operators}
+  \begin{itemize}
+    \item prometheus-operator
+    \item cert-manager
+    \item flux, flux-helm-operator
+    \item {\it Operator for Databases} (Postgresql, Elasticsearch, etc..)
+    \item Velero
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{prometheus}
+  \begin{figure}
+    \begin{center}
+      \includegraphics[width=\textwidth]{img/prometheus_architecture.png}
+    \end{center}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \frametitle{cert-manager}
+  \begin{figure}
+    \begin{center}
+      \includegraphics[width=\textwidth]{img/cert-manager.pdf}
+    \end{center}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
 \vfill
 \centering{Questions ?}
 \vfill
-(find me at \href{https://github.com/Zempashi/kube-training}{https://github.com/Zempashi/kube-training})
+(find this presentation at \href{https://github.com/Zempashi/kube-training}{https://github.com/Zempashi/kube-training})
 \end{frame}
 
 \end{document}
