@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  build:
+    build: .
+    volumes:
+      - .:/workdir
+    command: ["make", "-C", "slides"]
