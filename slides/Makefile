@@ -2,9 +2,10 @@
 PDFLATEX=pdflatex
 LATEXFLAGS=-file-line-error -halt-on-error -interaction errorstopmode --enable-write18
 
-all: pdf
-
 SRC_LATEX=$(wildcard *.tex)
+PDF=$(patsubst %.tex,%.pdf,$(SRC_LATEX))
+
+all: $(PDF)
 
 .PHONY:check
 check:
@@ -15,7 +16,11 @@ clean:
 	rm -rf *.aux *.nav *.pdf *.vrb *.log *.out *.snm *.toc
 
 
-pdf: ${SRC_LATEX}
+%: %.tex
+
+%.pdf: %.tex
 	$(PDFLATEX) $(LATEXFLAGS) $<
+
+docker-intro: docker-intro.pdf
 
 # vim: noexpandtab shiftwidth=8 softtabstop=0
