@@ -1,0 +1,10 @@
+containers:
+- name: mypod
+  image: redis
+  volumeMounts:
+  - name: foo
+    mountPath: "/etc/foo"
+volumes:
+- name: foo
+  secret:
+    secretName: mysecret

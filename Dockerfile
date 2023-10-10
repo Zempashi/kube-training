@@ -1,4 +1,4 @@
-from ubuntu:20.04
+from ubuntu:22.04
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     entr \
@@ -10,6 +10,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     texlive-latex-base \
     texlive-latex-extra \
     texlive-pictures \
+    vim \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /workdir

@@ -117,7 +117,7 @@ around 10 Billions dollars
     \end{itemize}
     \begin{block}{containers ?}
         More precisely an {\bf OCI {\it (Open~Container~Initiative)}~Image} from an {\bf OCI~Registry}
-        on a {\bf CRI {\it (Container~Runtime~Interface)}}
+        run by a {\bf CRI {\it (Container~Runtime~Interface)}}
 
     \end{block}
   \end{column}
@@ -304,7 +304,7 @@ around 10 Billions dollars
             dashed,
             fit=(etcd) (apiserver1) (apiserver\nbapiserver),
             inner sep=2mm,
-            label={[visible on=<5->,anchor=south west]above left:\scriptsize{master-nodes}}] (masternodes) {};
+            label={[visible on=<5->,anchor=south west]above left:\scriptsize{controlplane-nodes}}] (controlplane-nodes) {};
     }
 
   \end{tikzpicture}
@@ -480,6 +480,35 @@ around 10 Billions dollars
 
 \end{frame}
 
+\begin{frame}
+    \frametitle{ConfigMap and Secrets: two faces of the same coin}
+    \begin{columns}
+    \begin{column}{0.3\textwidth}
+        \textit{\scriptsize{configMap}}
+      \inputminted[fontsize=\tiny,frame=single]{yaml}{resources/configmap.yaml}
+    \end{column}
+    \begin{column}{0.3\textwidth}
+      \textit{\scriptsize{secret}}
+      \inputminted[fontsize=\tiny,frame=single]{yaml}{resources/secret.yaml}
+    \end{column}
+    \end{columns}
+    \vfill
+    \begin{columns}
+    \begin{column}{0.4\textwidth}
+      \inputminted[fontsize=\tiny,frame=single]{yaml}{resources/env.yaml}
+    \end{column}
+    \begin{column}{0.3\textwidth}
+      \inputminted[fontsize=\tiny,frame=single]{yaml}{resources/volume.yaml}
+    \end{column}
+    \end{columns}
+    \begin{center}
+    \begin{tikzpicture}[overlay]
+        \node [draw] (API) {\tiny{API*}};
+    \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+
 \section{Lego Building}
 
 \begin{frame}{CNCF \textendash \href{https://l.cncf.io}{https://l.cncf.io}}
@@ -512,7 +541,7 @@ Kube-router & L3        & Yes(BGP)         & IPIP/No       & Yes              & 
 Cilium      & BPF/L2/L3 & No/Yes(extern)   & Vxlan         & Yes              & No              \\ \hline
       \end{tabular}
     \end{table}
-  }
+}
 \end{frame}
 
 \begin{frame}
@@ -561,6 +590,64 @@ Cilium      & BPF/L2/L3 & No/Yes(extern)   & Vxlan         & Yes              & 
   }
 \end{tikzpicture}%
 }
+
+\begin{frame}
+  \frametitle{"Three-way" merge}
+  \begin{center}
+  \begin{tikzpicture}[overlay]
+      \node [draw, xshift=-2.5cm] (kubectl) {kubectl};
+      \visible<-2>{
+        \node [left=0.5cm of kubectl] (manifest) {
+          \begin{minipage}{0.2\textwidth}
+             \textit{manifest V1}
+             \inputminted[fontsize=\tiny,frame=single]{yaml}{resources/configmap-manifest.yaml}
+          \end{minipage}
+        };
+      };
+      \visible<3->{
+        \node [left=0.5cm of kubectl] (manifest) {
+          \begin{minipage}{0.2\textwidth}
+             \textit{manifest V2}
+             \inputminted[fontsize=\tiny,frame=single]{yaml}{resources/configmap-manifestv2.yaml}
+          \end{minipage}
+        };
+      };
+      \visible<2>{
+        \node [right=0.5cm of kubectl] (object) {
+           \begin{minipage}{0.6\textwidth}
+              \inputminted[fontsize=\tiny,frame=single]{yaml}{resources/configmap-kubectl.yaml}
+           \end{minipage}
+        };
+      };
+      \visible<3-4>{
+        \node [right=0.5cm of kubectl] (object) {
+           \begin{minipage}{0.6\textwidth}
+              \inputminted[fontsize=\tiny,frame=single]{yaml}{resources/configmap-kubectlv2.yaml}
+           \end{minipage}
+        };
+      };
+      \visible<5->{
+        \node [right=0.6cm of kubectl] (object) {
+           \begin{minipage}{0.6\textwidth}
+              \inputminted[fontsize=\tiny,frame=single]{yaml}{resources/configmap-kubectlv3.yaml}
+           \end{minipage}
+        };
+      };
+      \visible<1-4>{
+        \draw[->,draw] (manifest) -- (kubectl);
+      };
+      \visible<2>{
+        \draw[->,draw] (kubectl) -- (object);
+      };
+      \visible<4-4>{
+        \draw[->,draw] (object) -- (kubectl);
+      };
+      \visible<5>{
+          \draw[->,double,draw] (kubectl) -- node[draw=none,below,yshift=-0.2cm,near start]{\tiny{PATCHx3}} (object);
+      };
+  \end{tikzpicture}
+  \end{center}
+\end{frame}
 
 \begin{frame}
   \frametitle{Helm3}
@@ -693,6 +780,7 @@ Cilium      & BPF/L2/L3 & No/Yes(extern)   & Vxlan         & Yes              & 
     \item cert-manager
     \item flux, flux-helm-operator
     \item {\it Operator for Databases} (Postgresql, Elasticsearch, etc..)
+    \item Sealed-secrets
     \item Velero
   \end{itemize}
 \end{frame}

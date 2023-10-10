@@ -1,5 +1,5 @@
 
-PDFLATEX=pdflatex
+LATEX=pdflatex
 LATEXFLAGS=-file-line-error -halt-on-error -interaction errorstopmode --enable-write18
 
 SRC_LATEX=$(wildcard *.tex)
@@ -9,7 +9,7 @@ all: $(PDF)
 
 .PHONY:check
 check:
-	aspell --mode=tex --lang=en_US --encoding=UTF-8 -c ansible.tex
+	aspell --mode=tex --lang=en_US --encoding=UTF-8 -c *.tex
 
 .PHONY:clean
 clean:
@@ -19,7 +19,7 @@ clean:
 %: %.tex
 
 %.pdf: %.tex
-	$(PDFLATEX) $(LATEXFLAGS) $<
+	$(LATEX) $(LATEXFLAGS) $<
 
 docker-intro: docker-intro.pdf
 
